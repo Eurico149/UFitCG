@@ -5,24 +5,48 @@ CREATE TABLE assinatura(
 	valor_anual REAL,
 	desconto INTEGER,
 	aulas_gratis INTEGER,
-	acesso TEXT,
+	acesso VARCHAR(24)
 );
 
-CREATE TABLE aluno(
-	matricula INTEGER PRIMARY KEY AUTOINCREMENT,
-	nome VARCHAR(200) NOT NULL,
-	email VARCHAR(300),
-	tipo_assinatura CHAR(3),
-	situacao_assinatura VARCHAR(8) NOT NULL,
-	CHECK (email LIKE '%@%'),
-	CHECK (situacao_assinatura IN ('PENDENTE', 'PAGO')),
-	FOREIGN KEY(tipo_assinatura) REFERENCES assinatura(sigla)
+CREATE TABLE usuario(
+        matricula CHAR(9) PRIMARY KEY,
+        senha VARCHAR(8) NOT NULL,
+        tipo_usr CHAR(3) NOT NULL
 );
 
-INSERT INTO alunos(nome, email, tipo_assinatura, situacao_assinatura) VALUES(
-	'Eurico Gabriel Vasconcelos Pereira',
-	'euricogabriel149@gmail.com',
-	'GOLD',
-	'PAGO'
+CREATE TABLE cliente(
+        matricula CHAR(9) PRIMARY KEY,
+        nome VARCHAR(50) NOT NULL,
+        idade INTEGER,
+        tipo_assinatura CHAR(1) NOT NULL
 );
 
+CREATE TABLE vendas_assinatura(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	matricula CHAR(9) NOT NULL,
+	tipo_assinatura CHAR(3) NOT NULL,
+	tipo_parcela CHAR(1) NOT NULL,
+	parcelas_pagas INTEGER NOT NULL,
+	data_inicio CHAR(10) NOT NULL,
+	CHECK (tipo_parcela IN ('M', 'S', 'A')),
+	FOREIGN KEY(tipo_assinatura) REFERENCES assinatura(sigla),
+	FOREIGN KEY(matricula) REFERENCES cliente(matricula)
+);
+
+CREATE TABLE loja(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	nome VARCHAR(60),
+	valor REAL NOT NULL,
+	descricao VARCHAR(250),
+	categorias VARCHAR(50),
+	CHECK (valor>=0)
+);
+
+CREATE TABLE vendas_loja(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	produtos TEXT,
+	matricula_usr CHAR(9),
+	data VARCHAR(16),
+	valor_total REAL,
+	FOREIGN KEY(matricula_usr) REFERENCES cliente(matricula)	
+);
