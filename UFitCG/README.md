@@ -7,3 +7,7 @@
 3. Eurico
 4. Maria Clara
 5. Rodrigo
+
+## Stack
+[Link documentacao stack](https://docs.haskellstack.org)
+
