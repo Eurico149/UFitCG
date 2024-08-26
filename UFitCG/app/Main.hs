@@ -16,18 +16,18 @@ instance FromRow Usuario where
 
 -- Função para fazer a consulta ao banco de dados
 consultarUsuario :: String -> String -> IO ()
-consultarUsuario matricula senha = do
-  let queryStr = "SELECT tipo_usr FROM usuario WHERE matricula = ? AND senha = ?;"
+consultarUsuario usr senha = do
+  let queryStr = "SELECT tipo_usr FROM usuario WHERE usr = ? AND senha = ?;"
   bracket (open "data/DataBase.db") close $ \conn -> do
     let querySql = Query $ fromString queryStr -- Convertendo a string para Query
-    results <- query conn querySql (matricula, senha) :: IO [Usuario]
+    results <- query conn querySql (usr, senha) :: IO [Usuario]
     mapM_ print results
 
 -- Função principal
 main :: IO ()
 main = do
-  matricula <- getLine
+  usr <- getLine
   senha <- getLine
-  consultarUsuario matricula senha
+  consultarUsuario usr senha
 
 
