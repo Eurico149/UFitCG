@@ -1,33 +1,20 @@
 module Main (main) where
 
 import Database.SQLite.Simple
-import Database.SQLite.Simple.FromRow ()
-import Control.Exception (bracket)
-import Data.String (fromString) -- Certifique-se de importar fromString
+import Data.String (fromString)
 
--- Definindo o tipo de dados que será retornado pela consulta
-data Usuario = Usuario
-  { tipoUsr :: String
-  } deriving (Show)
+data Produto = Produto String Float String String
 
--- Definindo como o resultado da consulta será convertido para o tipo Usuario
-instance FromRow Usuario where
-  fromRow = Usuario <$> field
-
--- Função para fazer a consulta ao banco de dados
-consultarUsuario :: String -> String -> IO ()
-consultarUsuario usr senha = do
-  let queryStr = "SELECT tipo_usr FROM usuario WHERE usr = ? AND senha = ?;"
-  bracket (open "data/DataBase.db") close $ \conn -> do
-    let querySql = Query $ fromString queryStr -- Convertendo a string para Query
-    results <- query conn querySql (usr, senha) :: IO [Usuario]
-    mapM_ print results
+cadastroProduto :: Connection -> Produto -> IO ()
+cadastroProduto conn (Produto nome valor descricao categorias) = do
+    let query = fromString "INSERT INTO loja (nome, valor, descricao, categorias) VALUES (?, ?, ?, ?);"
+    execute conn query (nome, valor, descricao, categorias)
+    putStrLn "Produto inserido com sucesso!"
 
 -- Função principal
 main :: IO ()
 main = do
-  usr <- getLine
-  senha <- getLine
-  consultarUsuario usr senha
-
-
+    conn <- open "data/DataBase.db"
+    let prod = Produto "Abacate" 12.50 "Fruta fresca" "Alimentos"
+    cadastroProduto conn prod
+    close conn
