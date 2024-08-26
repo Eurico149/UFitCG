@@ -1,3 +1,4 @@
+-- Formato acesso: hh:mm hh:mm,hh:mm hh:mm 
 CREATE TABLE assinatura(
         sigla CHAR(3) PRIMARY KEY,
         valor_mensal REAL,
@@ -5,36 +6,45 @@ CREATE TABLE assinatura(
         valor_anual REAL,
         desconto INTEGER,
         aulas_gratis INTEGER,
-        acesso VARCHAR(24)
+        acesso VARCHAR(23)
 );
 
 CREATE TABLE usuario(
         matricula CHAR(9) PRIMARY KEY,
         senha VARCHAR(8) NOT NULL,
-        tipo_usr CHAR(3) NOT NULL
+        tipo_usr CHAR(3) NOT NULL,
+        nome VARCHAR(50) NOT NULL,
+        data_nascimento VARCHAR(10),
+
+        CHECK (tipo_usr in ('ADM', 'PER', 'CLI'))
 );
 
+-- Formato dara_nascimento: dd-mm-aaaa
 CREATE TABLE cliente(
         matricula CHAR(9) PRIMARY KEY,
         nome VARCHAR(50) NOT NULL,
-        idade INTEGER,
-        tipo_assinatura CHAR(1) NOT NULL
+        data_nascimento VARCHAR(10),
+        tipo_assinatura CHAR(3) NOT NULL,
+        FOREIGN KEY(tipo_assinatura) REFERENCES assinatura(sigla)
 );
 
+-- Formato dara_nascimento: dd-mm-aaaa
 CREATE TABLE personal(
         matricula CHAR(9) PRIMARY KEY,
         nome VARCHAR(50) NOT NULL,
-        idade INTEGER,
+        data_nascimento VARCHAR(10),
         salario REAL
 );
 
+-- Formato dara_nascimento: dd-mm-aaaa
 CREATE TABLE admin(
         matricula CHAR(9) PRIMARY KEY,
         nome VARCHAR(50) NOT NULL ,
-        idade INTEGER,
+        data_nascimento VARCHAR(10),
         salario REAL
 );
 
+-- Formato data: dd-mm-aaaa
 CREATE TABLE vendas_assinatura(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         matricula CHAR(9) NOT NULL,
@@ -47,6 +57,8 @@ CREATE TABLE vendas_assinatura(
         FOREIGN KEY(matricula) REFERENCES cliente(matricula)
 );
 
+
+-- Formato categorias: bebida suplemento barra_proteina,...
 CREATE TABLE loja(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome VARCHAR(60),
@@ -56,6 +68,8 @@ CREATE TABLE loja(
         CHECK (valor>=0)
 );
 
+-- Formato produtos: id_produto1 id_produto2 ...
+-- Formato data: dd-mm-aaaa hh:mm
 CREATE TABLE vendas_loja(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         produtos TEXT,
@@ -65,6 +79,7 @@ CREATE TABLE vendas_loja(
         FOREIGN KEY(matricula_usr) REFERENCES cliente(matricula)
 );
 
+-- Formato exercicios: nome_exercicio seriesXrepeticoes,...
 CREATE TABLE ficha_treino(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         matricula_cli CHAR(9),
@@ -83,6 +98,8 @@ CREATE TABLE suporte(
         FOREIGN KEY(matricula_cli) REFERENCES cliente(matricula)
 );
 
+-- Formato data: dd/mm/aaaa
+-- formato avalicao: parte_corpo medida,gordura_corporal num%,...
 CREATE TABLE avaliacao_fisica(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         matricula_cli CHAR(9),
@@ -112,3 +129,4 @@ CREATE TABLE clientes_aulas(
 );
 
 INSERT INTO usuario(matricula, senha, tipo_usr) VALUES ('111111111', '12345678', 'ADM');
+INSERT INTO admin(matricula, nome, data_nascimento,salario) VALUES ('111111111', 'Eurico Gabriel Vasconcelos Pereira', '13/02/2000', 3500.00);
