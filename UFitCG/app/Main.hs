@@ -24,6 +24,4 @@ main = do
     conn <- open "data/DataBase.db"
     let prod = Produto "Abacate" 12.50 "Fruta fresca" "Alimentos"
     cadastroProduto conn prod
-    let usr = Usuario "RenaldoF20" "87654321" "ADM" "Renaldo Franca" "20/10/2003" "   " 15000
-    cadastraUsuatio conn usr
     close conn
