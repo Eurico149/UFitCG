@@ -9,6 +9,6 @@ import Usuario
 
 main :: IO ()
 main = do
-    mensagem <- (cadastraUsuario "ClaraM" "12345678" "ADM" "Clara" "00/00/0000" "   " 1)
+    mensagem <- (cadastraUsuario "CM4545154" "12345678" "CLI" "Clara" "00/00/0000" "123" 0)
     putStrLn mensagem
     

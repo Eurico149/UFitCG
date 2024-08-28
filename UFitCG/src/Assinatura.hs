@@ -1,6 +1,9 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Assinatura (cadastraAssinatura) where
 
 import Database.SQLite.Simple
+import Database.SQLite.Simple.FromRow
 import Data.String (fromString)
 import Data.Char (toUpper)
 
@@ -25,3 +28,4 @@ insertAssinatura conn (Assinatura sigla mensal semestral anual desconto aulas ac
     let query = fromString "INSERT INTO assinatura (sigla, valor_mensal, valor_semestral, valor_anual, desconto, aulas_gratis, acesso) VALUES (?, ?, ?, ?, ?, ?, ?);"
     execute conn query (sigla, mensal, semestral, anual, desconto, aulas, acesso)
     return ()
+
