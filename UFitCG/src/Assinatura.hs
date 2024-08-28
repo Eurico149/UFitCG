@@ -1,10 +1,11 @@
-module Assinatura (cadastraAssinatura) where
+module Assinatura (cadastraAssinatura, cadastraVendaAssinatura) where
 
 import Database.SQLite.Simple
 import Data.String (fromString)
 import Data.Char (toUpper)
 
 data Assinatura = Assinatura String Float Float Float Int Int String
+data VendaAssinatura = VendaAssinatura String String String Int String
 
 cadastraAssinatura :: String -> Float -> Float -> Float -> Int -> Int -> String -> IO String
 cadastraAssinatura sigla mensal semestral anual desconto aulas acesso = do
@@ -22,6 +23,29 @@ cadastraAssinatura sigla mensal semestral anual desconto aulas acesso = do
 
 insertAssinatura :: Connection -> Assinatura -> IO ()
 insertAssinatura conn (Assinatura sigla mensal semestral anual desconto aulas acesso) = do
-    let query = fromString "INSERT INTO assinatura (sigla, valor_mensal, valor_semestral, valor_anual, desconto, aulas_gratis, acesso) VALUES (?, ?, ?, ?, ?, ?, ?);"
+    let query = fromString "INSERT INTO assinatura(sigla, valor_mensal, valor_semestral, valor_anual, desconto, aulas_gratis, acesso) VALUES (?, ?, ?, ?, ?, ?, ?);"
     execute conn query (sigla, mensal, semestral, anual, desconto, aulas, acesso)
     return ()
+
+
+
+insertVendaAssinatura :: Connection -> VendaAssinatura -> IO()
+insertVendaAssinatura conn (VendaAssinatura usr tipo_assinatura tipo_parcela parcelas_pagas data_inicio) = do
+    let query = fromString "INSERT INTO vendas_assinatura(usr, tipo_assinatura, tipo_parcela, parcelas_pagas, data_inicio) VALUES (?, ?, ?, ?, ?);"
+    execute conn query (usr, tipo_assinatura, tipo_parcela, parcelas_pagas, data_inicio)
+    return ()
+
+cadastraVendaAssinatura :: String -> String -> String -> Int -> String -> IO String
+cadastraVendaAssinatura usr tipo_assinatura tipo_parcela parcelas_pagas data_inicio = do
+    if (length usr) > 40 then return "Nome de Usuario Deve Ter no Maximo 40 Caracteres!" 
+        else if (length tipo_assinatura) /= 3 then return "Tipo de Assinatura Deve ter 3 Letras!"
+            else if (length tipo_parcela) /= 1 then return "O Tipo de Parcela Deve Ter 1 Letra!"
+                else if (length data_inicio) /= 10 then return "Formato de data Invalido!"
+                    else if parcelas_pagas < 0 then return "Numero de Parcelas Invalido!"
+                        else if (map toUpper tipo_parcela) /= "M" && (map toUpper tipo_parcela) /= "S" && (map toUpper tipo_parcela) /= "A" then return "Tipo de Parcela Invalido!"
+                            else do
+                                conn <- open "data/DataBase.db"
+                                let venass = VendaAssinatura usr tipo_assinatura tipo_parcela parcelas_pagas data_inicio
+                                insertVendaAssinatura conn venass
+                                close conn
+                                return "Venda Inserida!"
