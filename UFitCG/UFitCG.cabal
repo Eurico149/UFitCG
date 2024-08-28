@@ -27,6 +27,7 @@ library
   exposed-modules:
       Assinatura
       Loja
+      Usuario
   other-modules:
       Paths_UFitCG
   autogen-modules:
