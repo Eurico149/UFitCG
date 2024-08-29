@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Usuario (cadastraUsuario, temAssinatura, verificaExistencia) where
+module Usuario (cadastraUsuario, temAssinatura, verificaExistencia, removeUsuario) where
 
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
@@ -63,3 +63,21 @@ temAssinatura sigla = do
 
     if quant >= 1 then return True
         else return False
+
+removeUsuario :: String -> IO String
+removeUsuario usr = do 
+    conn <- open "data/DataBase.db"
+    quant <- verificaExistencia conn usr
+    if quant >= 1 then do 
+        deletarTupla conn usr
+        close conn
+        return "Usuario removido!" 
+    else do 
+        close conn
+        return "Usuario Inexistente!" 
+
+
+deletarTupla :: Connection -> String -> IO String
+deletarTupla conn usr = do
+    execute conn "DELETE FROM usuario WHERE usr=?" (Only usr)
+    return ""

@@ -5,10 +5,10 @@ import Data.String (fromString)
 
 import Loja
 import Assinatura
-import Usuario
+import Usuario 
 
 main :: IO ()
 main = do
-    mensagem <- (cadastraVendaAssinatura "eurico" "LEP" "A" 0 "29/08/2004")
+    mensagem <- (removeProduto 1)
     putStrLn mensagem
     
