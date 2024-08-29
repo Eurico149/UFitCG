@@ -29,10 +29,13 @@ cadastraUsuario usr senha tipo_usr nome data_nascimento tipo_assinatura salario 
                                 close conn
                                 return "Usuario Cadastrado Com Sucesso!"
                             else if tipo_usr == "CLI" then do
-                                let user = Usuario usr senha tipo_usr nome data_nascimento tipo_assinatura salario
-                                insertUsuario conn user
-                                close conn
-                                return "Usuario Cadastrado Com Sucesso!"
+                                temAssinaturaBool <- temAssinatura tipo_assinatura
+                                if temAssinaturaBool then do
+                                    let user = Usuario usr senha tipo_usr nome data_nascimento tipo_assinatura salario
+                                    insertUsuario conn user
+                                    close conn
+                                    return "Usuario Cadastrado Com Sucesso!"
+                                else return "Tipo de Assinatura Invalida!"
                             else return "Tipo de Usuario Invalido!"
 
 
@@ -46,3 +49,18 @@ verificaExistencia :: Connection -> String -> IO Int
 verificaExistencia conn usr = do
     [Only count] <- query conn "SELECT COUNT(*) FROM usuario WHERE usr=?" (Only usr)
     return count
+
+quantAssinatura :: Connection -> String -> IO Int
+quantAssinatura conn sigla = do
+    [Only count] <- query conn "SELECT COUNT (*) FROM assinatura WHERE sigla=?" (Only sigla)
+    return count
+    
+
+temAssinatura :: String -> IO Bool
+temAssinatura sigla = do 
+    conn <- open "data/DataBase.db"
+    quant <- quantAssinatura conn sigla
+    close conn
+
+    if quant >= 1 then return True
+        else return False

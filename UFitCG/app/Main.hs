@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Database.SQLite.Simple
+import Data.String (fromString)
 
 import Loja
 import Assinatura
