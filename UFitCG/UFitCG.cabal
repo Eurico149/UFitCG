@@ -28,6 +28,7 @@ library
       Assinatura
       AulaExtra
       AvaliacaoFisica
+      ClienteAulas
       Loja
       Usuario
   other-modules:

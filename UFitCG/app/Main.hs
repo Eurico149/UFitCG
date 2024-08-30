@@ -10,6 +10,6 @@ import AvaliacaoFisica
 
 main :: IO ()
 main = do
-    mensagem <- (removeAssinatura "gode")
+    mensagem <- (listarVendasAssinaturas)
     putStrLn mensagem
     

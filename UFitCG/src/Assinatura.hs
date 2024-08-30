@@ -1,13 +1,19 @@
-module Assinatura (cadastraAssinatura, cadastraVendaAssinatura, removeAssinatura) where
+module Assinatura (cadastraAssinatura, cadastraVendaAssinatura, removeAssinatura, removeVendasAssinatura, listarAssinaturas, listarVendasAssinaturas) where
 
 import Database.SQLite.Simple
+import Database.SQLite.Simple.FromRow
 import Data.String (fromString)
 import Data.Char (toUpper)
 
 import Usuario (temAssinatura, verificaExistencia)
 
-data Assinatura = Assinatura String Float Float Float Int Int String
+data Assinatura = Assinatura String Float Float Float Int Int String deriving (Show)
 data VendaAssinatura = VendaAssinatura String String String Int String
+data VendaAssinaturaLis = VendaAssinaturaLis Int String String String Int String
+instance FromRow Assinatura where
+  fromRow = Assinatura <$> field <*> field <*> field <*> field <*> field <*> field <*> field
+instance FromRow VendaAssinaturaLis where
+  fromRow = VendaAssinaturaLis <$> field <*> field <*> field <*> field <*> field <*> field
 
 cadastraAssinatura :: String -> Float -> Float -> Float -> Int -> Int -> String -> IO String
 cadastraAssinatura sigla mensal semestral anual desconto aulas acesso = do
@@ -29,7 +35,36 @@ insertAssinatura conn (Assinatura sigla mensal semestral anual desconto aulas ac
     execute conn codigo (sigla, mensal, semestral, anual, desconto, aulas, acesso)
     return ()
 
+removeAssinatura :: String -> IO String
+removeAssinatura sigla = do
+    if (length sigla) /= 3 then return "Formato De Assinatura Invalido!"
+    else do
+        let siglaupper = (map toUpper sigla)
+        veriAss <- temAssinatura siglaupper
+        if veriAss then do
+            conn <- open "data/DataBase.db"
+            delAssinatura conn siglaupper
+            close conn
+            return "Assinatura Dletada!"
+        else return "Essa Assinatura Não Esta Cadastrada!"
 
+delAssinatura :: Connection -> String -> IO()
+delAssinatura conn sigla = do
+    execute conn (fromString "DELETE FROM assinatura WHERE sigla=?") (Only sigla)
+    return ()
+
+formatAssinatura :: Int -> Assinatura -> String
+formatAssinatura id_ass (Assinatura sigla mensal semestral anual desconto aulas acesso) =
+    if null acesso then show id_ass ++ ". " ++ sigla ++ ", Valor_Mensal: R$" ++ show mensal ++ ", Valor_Semestral: R$" ++ show semestral ++ ", Valor_Anual: R$" ++ show anual ++ ", Desconto_Aulas: " ++ show desconto ++ "%, Aulas: " ++ show aulas ++ ", Acesso: Iimitado"
+    else show id_ass ++ ". " ++ sigla ++ ", Valor_Mensal: R$" ++ show mensal ++ ", Valor_Semestral: R$" ++ show semestral ++ ", Valor_Anual: R$" ++ show anual ++ ", Desconto_Aulas: " ++ show desconto ++ "%, Aulas: " ++ show aulas ++ ", Acesso: " ++ acesso
+
+listarAssinaturas :: IO String
+listarAssinaturas = do 
+    conn <- open "data/DataBase.db"
+    assinaturas <- query_ conn (fromString "SELECT * FROM assinatura") :: IO [Assinatura]
+    close conn
+    let resultado = unlines $ zipWith formatAssinatura [1..] assinaturas
+    return resultado
 
 cadastraVendaAssinatura :: String -> String -> String -> Int -> String -> IO String
 cadastraVendaAssinatura usr tipo_assinatura tipo_parcela parcelas_pagas data_inicio = do
@@ -64,20 +99,41 @@ verificaUsr usr = do
     close conn
     return (quant == 1)
 
-removeAssinatura :: String -> IO String
-removeAssinatura sigla = do
-    if (length sigla) /= 3 then return "Formato De Assinatura Invalido!"
-    else do
-        let siglaupper = (map toUpper sigla)
-        veriAss <- temAssinatura siglaupper
-        if veriAss then do
-            conn <- open "data/DataBase.db"
-            delAssinatura conn siglaupper
-            close conn
-            return "Assinatura Dletada!"
-        else return "Essa Assinatura Não Esta Cadastrada!"
+quantVendaAssinatura :: Connection -> Int -> IO Int
+quantVendaAssinatura conn id_ven = do
+    [Only count] <- query conn (fromString "SELECT COUNT (*) FROM vendas_assinatura WHERE id=?") (Only id_ven)
+    return count
 
-delAssinatura :: Connection -> String -> IO()
-delAssinatura conn sigla = do
-    execute conn (fromString "DELETE FROM assinatura WHERE sigla=?") (Only sigla)
+verificaVendaAssinatura :: Int -> IO Bool
+verificaVendaAssinatura id_ven = do
+    conn <- open "data/DataBase.db"
+    quant <- quantVendaAssinatura conn id_ven
+    close conn
+    return (quant == 1)
+
+removeVendasAssinatura :: Int -> IO String
+removeVendasAssinatura id_ven = do
+    verivenda <- verificaVendaAssinatura id_ven
+    conn <- open "data/DataBase.db"
+    if verivenda then do
+        delVendaAssinatura conn id_ven
+        close conn
+        return "Venda Removida Com Sucesso!"
+    else return "Venda Não Cadastrada!"
+
+delVendaAssinatura :: Connection -> Int -> IO ()
+delVendaAssinatura conn id_ven = do
+    execute conn (fromString "DELETE FROM vendas_assinatura WHERE id=?") (Only id_ven)
     return ()
+
+formatVendaAssinatura :: VendaAssinaturaLis -> String
+formatVendaAssinatura (VendaAssinaturaLis id_ven usr tipo_assinatura tipo_parcela parcelas_pagas data_inicio) =
+    show id_ven ++ ". " ++ show usr ++ ", Tipo_Assinatura: " ++ show tipo_assinatura ++ ", Tipo_Parcela: " ++ show tipo_parcela ++ ", Parcelas_pagas: " ++ show parcelas_pagas ++ ", Data_Inicio: " ++ show data_inicio
+
+listarVendasAssinaturas :: IO String
+listarVendasAssinaturas = do 
+    conn <- open "data/DataBase.db"
+    vendas <- query_ conn (fromString "SELECT * FROM vendas_assinatura") :: IO [VendaAssinaturaLis]
+    close conn
+    let resultado = unlines $ map formatVendaAssinatura vendas
+    return resultado
