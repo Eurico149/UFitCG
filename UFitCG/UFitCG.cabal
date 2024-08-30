@@ -27,9 +27,9 @@ library
   exposed-modules:
       Assinatura
       AulaExtra
+      AvaliacaoFisica
       Loja
       Usuario
-      AvaliacaoFisica
   other-modules:
       Paths_UFitCG
   autogen-modules:

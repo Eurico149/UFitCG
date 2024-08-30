@@ -1,4 +1,4 @@
-module Assinatura (cadastraAssinatura, cadastraVendaAssinatura) where
+module Assinatura (cadastraAssinatura, cadastraVendaAssinatura, removeAssinatura) where
 
 import Database.SQLite.Simple
 import Data.String (fromString)
@@ -63,3 +63,21 @@ verificaUsr usr = do
     quant <- verificaExistencia conn usr
     close conn
     return (quant == 1)
+
+removeAssinatura :: String -> IO String
+removeAssinatura sigla = do
+    if (length sigla) /= 3 then return "Formato De Assinatura Invalido!"
+    else do
+        let siglaupper = (map toUpper sigla)
+        veriAss <- temAssinatura siglaupper
+        if veriAss then do
+            conn <- open "data/DataBase.db"
+            delAssinatura conn siglaupper
+            close conn
+            return "Assinatura Dletada!"
+        else return "Essa Assinatura Não Esta Cadastrada!"
+
+delAssinatura :: Connection -> String -> IO()
+delAssinatura conn sigla = do
+    execute conn (fromString "DELETE FROM assinatura WHERE sigla=?") (Only sigla)
+    return ()
