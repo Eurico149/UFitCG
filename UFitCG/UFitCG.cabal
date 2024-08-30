@@ -29,6 +29,7 @@ library
       AulaExtra
       Loja
       Usuario
+      AvaliacaoFisica
   other-modules:
       Paths_UFitCG
   autogen-modules:

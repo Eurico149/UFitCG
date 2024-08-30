@@ -6,6 +6,7 @@ import Data.String (fromString)
 import Loja
 import Assinatura
 import Usuario 
+import AvaliacaoFisica
 
 main :: IO ()
 main = do
