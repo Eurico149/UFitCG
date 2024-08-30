@@ -28,8 +28,9 @@ library
       Assinatura
       AulaExtra
       AvaliacaoFisica
-      ClienteAulas
+      Login
       Loja
+      Navegabilidade
       Usuario
   other-modules:
       Paths_UFitCG

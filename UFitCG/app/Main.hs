@@ -7,9 +7,11 @@ import Loja
 import Assinatura
 import Usuario 
 import AvaliacaoFisica
+import Login
+import Navegabilidade
 
 main :: IO ()
 main = do
-    mensagem <- (listarVendasAssinaturas)
-    putStrLn mensagem
+    abaLogin
+    
     

@@ -1,11 +1,11 @@
-module Assinatura (cadastraAssinatura, cadastraVendaAssinatura, removeAssinatura, removeVendasAssinatura, listarAssinaturas, listarVendasAssinaturas) where
+module Assinatura (verificaVendaAssinatura, cadastraAssinatura, cadastraVendaAssinatura, removeAssinatura, removeVendasAssinatura, listarAssinaturas, listarVendasAssinaturas) where
 
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
 import Data.String (fromString)
 import Data.Char (toUpper)
 
-import Usuario (temAssinatura, verificaExistencia)
+import Usuario (temAssinatura, verificaUsr)
 
 data Assinatura = Assinatura String Float Float Float Int Int String deriving (Show)
 data VendaAssinatura = VendaAssinatura String String String Int String
@@ -91,13 +91,6 @@ insertVendaAssinatura conn (VendaAssinatura usr tipo_assinatura tipo_parcela par
     let codigo = fromString "INSERT INTO vendas_assinatura(usr, tipo_assinatura, tipo_parcela, parcelas_pagas, data_inicio) VALUES (?, ?, ?, ?, ?);"
     execute conn codigo (usr, tipo_assinatura, tipo_parcela, parcelas_pagas, data_inicio)
     return ()
-
-verificaUsr :: String -> IO Bool
-verificaUsr usr = do
-    conn <- open "data/DataBase.db"
-    quant <- verificaExistencia conn usr
-    close conn
-    return (quant == 1)
 
 quantVendaAssinatura :: Connection -> Int -> IO Int
 quantVendaAssinatura conn id_ven = do

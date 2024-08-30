@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Usuario (cadastraUsuario, temAssinatura, verificaExistencia, removeUsuario) where
+module Usuario (cadastraUsuario, temAssinatura, verificaUsr, removeUsuario, verificaExistencia) where
 
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
@@ -53,7 +53,7 @@ quantAssinatura :: Connection -> String -> IO Int
 quantAssinatura conn sigla = do
     [Only count] <- query conn "SELECT COUNT (*) FROM assinatura WHERE sigla=?" (Only sigla)
     return count
-    
+ 
 
 temAssinatura :: String -> IO Bool
 temAssinatura sigla = do 
@@ -81,3 +81,11 @@ deletarTupla :: Connection -> String -> IO String
 deletarTupla conn usr = do
     execute conn "DELETE FROM usuario WHERE usr=?" (Only usr)
     return ""
+
+verificaUsr :: String -> IO Bool
+verificaUsr usr = do
+    conn <- open "data/DataBase.db"
+    quant <- verificaExistencia conn usr
+    close conn
+    return (quant == 1)
+
