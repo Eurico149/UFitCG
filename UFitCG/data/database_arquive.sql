@@ -57,7 +57,7 @@ CREATE TABLE carrinho(
         id_prod INTEGER,
         FOREIGN KEY(usr) REFERENCES usuario(usr),
         FOREIGN KEY(id_prod) REFERENCES loja(id)
-)
+);
 
 -- Formato produtos: id_produto1 id_produto2 ...
 -- Formato data: dd-mm-aaaa hh:mm
@@ -113,4 +113,4 @@ CREATE TABLE clientes_aulas(
         FOREIGN KEY(id_aula) REFERENCES aula_extra(id)
 );
 
-INSERT INTO usuario(usr, senha, tipo_usr, nome, data_nascimento,salario) VALUES ('eurico', '12345678', 'ADM', 'Eurico Gabriel Vasconcelos Pereira', '13/02/2000', 3500.00);
+INSERT INTO usuario(usr, senha, tipo_usr, nome, data_nascimento, tipo_assinatura, salario) VALUES ('eurico', '12345678', 'ADM', 'Eurico Gabriel Vasconcelos Pereira', '13/02/2000', '', 3500.00);
