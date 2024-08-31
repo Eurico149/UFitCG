@@ -41,5 +41,10 @@ verificaHorario conn usr = do
     horario_atual <- getZonedTime
     let timeInBrazil = zonedTimeToLocalTime horario_atual
         (TimeOfDay hour _ _) = localTimeOfDay timeInBrazil
-    if (hour >= 6 && hour <= 14) && (tipo_assinatura == "SIL") then return False
-    else return True
+    case tipo_assinatura of
+        Nothing -> return True
+        Just "SIL" -> 
+            if hour >= 6 && hour <= 7
+               then return True
+               else return False
+        _ -> return True

@@ -24,13 +24,19 @@ abaLogin = do
     callCommand "clear"
 
     veri <- login usr senha
-    if null veri then do
+    if null veri then do 
         putStrLn "Usuario ou Senha Invalido"
         putStrLn "Aperte Enter Para Fazer Login Novamente ou '-' Para Sair"
         comando <- getLine
         if comando == "-" then return ()
         else abaLogin
-    else tipoMenu veri usr
+    else if "h" == veri then do  
+            putStrLn "Usuario fora de Horario de Acesso"
+            putStrLn "Aperte Enter Para Fazer Login Novamente ou '-' Para Sair"
+            comando <- getLine
+            if comando == "-" then return ()
+            else abaLogin
+        else tipoMenu veri usr
 
 tipoMenu :: String -> String -> IO ()
 tipoMenu tipo_usr usr
