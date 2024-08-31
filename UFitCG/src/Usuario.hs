@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Usuario (cadastraUsuario, temAssinatura, verificaUsr, removeUsuario, verificaExistencia, mostrarPerfil) where
+module Usuario (cadastraUsuario, temAssinatura, verificaUsr, removeUsuario, verificaExistencia, mostrarPerfil, mostrarUsuarios) where
 
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
@@ -101,6 +101,17 @@ mostrarPerfil usr = do
     mapM_ printPerfil user
 
     close conn
+
+mostrarUsuarios :: IO()
+mostrarUsuarios = do
+    conn <- open "data/DataBase.db"
+
+    user <- query_ conn "SELECT * FROM usuario" :: IO [Usuario]
+
+    mapM_ printPerfil user
+
+    close conn
+
 
 printPerfil :: Usuario -> IO()
 printPerfil (Usuario usr senha tipo_usr nome data_nascimento tipo_assinatura salario) = do
