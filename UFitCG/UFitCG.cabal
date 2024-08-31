@@ -45,6 +45,7 @@ library
     , process
     , sqlite-simple
     , text
+    , time >=1.9 && <1.13
   default-language: Haskell2010
 
 executable UFitCG-exe
@@ -62,6 +63,7 @@ executable UFitCG-exe
     , process
     , sqlite-simple
     , text
+    , time >=1.9 && <1.13
   default-language: Haskell2010
 
 test-suite UFitCG-test
@@ -80,4 +82,5 @@ test-suite UFitCG-test
     , process
     , sqlite-simple
     , text
+    , time >=1.9 && <1.13
   default-language: Haskell2010

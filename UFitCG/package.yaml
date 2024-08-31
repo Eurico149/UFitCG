@@ -23,6 +23,7 @@ dependencies:
 - base >= 4.7 && < 5
 - text
 - sqlite-simple
+- time >= 1.9 && < 1.13
 - process
 
 ghc-options:

@@ -2,18 +2,23 @@ module Login (login) where
 
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
-import Data.String (fromString)
+import Data.String (fromString, String)
+import Data.Time
 
 import Usuario (verificaUsr)
+import Data.Bool (Bool (True))
 
 login :: String -> String -> IO String 
 login usr senha = do
     conn <- open "data/DataBase.db"
     veri_dados <- verificaDadosLogin conn usr senha
     if veri_dados then do
-        tipo <- veriUsuario conn usr senha
-        close conn
-        return tipo
+        veri_horario <- verificaHorario conn usr
+        if veri_horario then do
+            tipo <- veriUsuario conn usr senha
+            close conn
+            return tipo
+        else return ""
     else return ""
 
 veriUsuario :: Connection -> String -> String -> IO String
@@ -29,3 +34,12 @@ verificaDadosLogin conn usr senha_usr = do
         if senha_usr == senha then return True
         else return False
     else return False
+
+verificaHorario :: Connection -> String -> IO Bool
+verificaHorario conn usr = do
+    [Only tipo_assinatura] <- query conn (fromString "SELECT tipo_assinatura FROM usuario WHERE usr=?") (Only usr)
+    horario_atual <- getZonedTime
+    let timeInBrazil = zonedTimeToLocalTime horario_atual
+        (TimeOfDay hour _ _) = localTimeOfDay timeInBrazil
+    if (hour >= 6 && hour <= 14) && (tipo_assinatura == "SIL") then return False
+    else return True
