@@ -22,7 +22,6 @@ CREATE TABLE usuario(
         tipo_assinatura CHAR(3),
         salario REAL,
         CHECK (salario >= 0),
-        CHECK (length(tipo_assinatura) = 3),
         CHECK (length(senha) = 8),
         CHECK (tipo_usr in ('ADM', 'PER', 'CLI')),
         FOREIGN KEY(tipo_assinatura) REFERENCES assinatura(sigla)
@@ -53,6 +52,13 @@ CREATE TABLE loja(
         CHECK (valor>=0)
 );
 
+CREATE TABLE carrinho(
+        usr VARCHAR(40),
+        id_prod INTEGER,
+        FOREIGN KEY(usr) REFERENCES usuario(usr),
+        FOREIGN KEY(id_prod) REFERENCES loja(id)
+)
+
 -- Formato produtos: id_produto1 id_produto2 ...
 -- Formato data: dd-mm-aaaa hh:mm
 CREATE TABLE vendas_loja(
@@ -74,15 +80,6 @@ CREATE TABLE ficha_treino(
         observacoes VARCHAR(250),
         FOREIGN KEY(usr_cli) REFERENCES usuario(usr),
         FOREIGN KEY(usr_per) REFERENCES usuario(usr)
-);
-
-CREATE TABLE suporte(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        usr_cli VARCHAR(40) NOT NULL,
-        usr_fun VARCHAR(40) NOT NULL,
-        comentario TEXT,
-        FOREIGN KEY(usr_cli) REFERENCES usuario(usr),
-        FOREIGN KEY(usr_fun) REFERENCES usuario(usr)
 );
 
 -- Formato data: dd/mm/aaaa
