@@ -33,7 +33,7 @@ insertProduto conn (Produto nome valor descricao categorias) = do
 removeProduto :: Int -> IO String
 removeProduto id = do
     conn <- open "data/DataBase.db"
-    quant <- verificaExistencia conn id
+    quant <- verificaExistenciaProduto conn id
     if quant >= 1 then do 
         deletarTupla conn id
         close conn
@@ -47,8 +47,8 @@ deletarTupla conn id = do
     execute conn "DELETE FROM loja WHERE id=?" (Only id)
     return ""
 
-verificaExistencia :: Connection -> Int -> IO Int
-verificaExistencia conn id = do
+verificaExistenciaProduto :: Connection -> Int -> IO Int
+verificaExistenciaProduto conn id = do
     [Only count] <- query conn "SELECT COUNT(*) FROM loja WHERE id=?" (Only id)
     return count
 
