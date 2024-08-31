@@ -26,7 +26,7 @@ cadastraUsuario usr senha tipo_usr nome data_nascimento tipo_assinatura salario 
     else do
         conn <- open "data/DataBase.db"
         if tipo_usr == "ADM" || tipo_usr == "PER" then do
-            let user = Usuario usr senha tipo_usr nome data_nascimento "   " salario
+            let user = Usuario usr senha tipo_usr nome data_nascimento "" salario
             insertUsuario conn user
             close conn
             return "Usuario Cadastrado Com Sucesso!"

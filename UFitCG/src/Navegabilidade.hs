@@ -5,8 +5,8 @@ import Usuario
 import Assinatura
 import ClienteAula
 import Loja
-import AvaliacaoFisica (cadastraAvaliacao)
-import AulaExtra (cadastraAula)
+import AvaliacaoFisica
+import AulaExtra
 import System.IO (hFlush, stdout)
 import System.Process (callCommand)
 
@@ -62,7 +62,7 @@ acaoMenuADM comando usr
         mostrarPerfil usr
         espera
         menuAdm usr
-    | comando == "-" = return ()
+    | comando == "-" = abaLogin
     | otherwise = menuAdm usr
 
 menuUsuarioAdm :: String -> IO () 
@@ -232,7 +232,7 @@ acaoMenuPer :: String -> String -> IO ()
 acaoMenuPer comando usr
     | comando == "1" = menuAulasPer usr
     | comando == "2" = menuAvaliacaoPer usr
-    | comando == "-" = return ()
+    | comando == "-" = abaLogin
     | otherwise = menuPer usr
 
 menuAvaliacaoPer :: String -> IO ()
@@ -292,8 +292,39 @@ acaoMenuAulasPer comando usr
         putStrLn mensagem
         espera
         menuAulasPer usr
+    | comando == "2" = do
+        putStr "Id: "
+        hFlush stdout
+        id_aula <- getLine
+
+        mensagem <- (removeAula id_aula)
+        putStrLn mensagem
+        espera
+        menuAulasPer usr
+    | comando == "3" = menuListaAulaPer usr
     | comando == "-" = menuPer usr
     | otherwise = menuAulasPer usr
+
+menuListaAulaPer :: String -> IO()
+menuListaAulaPer usr = do
+    putStrLn "Digite O Numero Do Comando A Sua Escolha"
+    putStrLn "1. Listar Minhas Aulas\n2. Listar Todas as Aulas\n-. Voltar"
+    comando <- getLine
+    callCommand "clear"
+    acaoMenuListaAulaPer comando usr
+
+acaoMenuListaAulaPer :: String -> String -> IO ()
+acaoMenuListaAulaPer comando usr
+    | comando == "1" = do
+        listarAulasPersonal usr
+        espera
+        menuListaAulaPer usr
+    | comando == "2" = do 
+        listarAulas
+        espera
+        menuListaAulaPer usr
+    | comando == "-" = menuAulasPer usr
+    | otherwise = menuListaAulaPer usr
 
 menuCli :: String -> IO ()
 menuCli usr = do
@@ -314,7 +345,7 @@ acaoMenuCli comando usr
         listarAulasCliente usr
         espera
         menuCli usr
-    | comando == "-" = return ()
+    | comando == "-" = abaLogin
     | otherwise = menuCli usr
 
 espera :: IO ()
