@@ -1,13 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Usuario (cadastraUsuario, temAssinatura, verificaUsr, removeUsuario, verificaExistencia) where
+module Usuario (cadastraUsuario, temAssinatura, verificaUsr, removeUsuario, verificaExistencia, mostrarPerfil) where
 
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
 import Data.String (fromString)
 
 
-data Usuario = Usuario String String String String String String Float
+data Usuario = Usuario String String String String String String Float deriving (Show)
+
+instance FromRow Usuario where
+    fromRow = Usuario <$> field <*> field <*> field <*> field <*> field <*> field <*> field
 
 cadastraUsuario :: String -> String -> String -> String -> String -> String -> Float -> IO String
 cadastraUsuario usr senha tipo_usr nome data_nascimento tipo_assinatura salario = do
@@ -89,3 +92,26 @@ verificaUsr usr = do
     close conn
     return (quant == 1)
 
+mostrarPerfil :: String -> IO()
+mostrarPerfil usr = do 
+    conn <- open "data/DataBase.db"
+
+    user <- query conn "SELECT * FROM usuario WHERE usr=?" (Only usr) :: IO [Usuario]
+
+    mapM_ printPerfil user
+
+    close conn
+
+printPerfil :: Usuario -> IO()
+printPerfil (Usuario usr senha tipo_usr nome data_nascimento tipo_assinatura salario) = do
+    putStrLn $ "Usuario: " ++ usr
+    if tipo_usr =="CLI" then putStrLn $ "Tipo de Usuario: Cliente"
+    else if tipo_usr == "ADM" then putStrLn $ "Tipo de Usuario: Administrador"
+    else putStrLn $ "Tipo de Usuario: Personal"
+
+    putStrLn $ "Nome: " ++ nome
+    putStrLn $ "Data de Nascimento: " ++ data_nascimento
+
+    if tipo_usr == "CLI" then putStrLn $ "Tipo de Assinatura: " ++ tipo_assinatura
+    else putStrLn $ "Salario: " ++ show salario
+    putStrLn $ "" 

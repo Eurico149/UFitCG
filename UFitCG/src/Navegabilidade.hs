@@ -3,6 +3,9 @@ module Navegabilidade (abaLogin) where
 import Login
 import Assinatura
 import ClienteAula
+import Usuario
+import Loja
+import AvaliacaoFisica
 import System.IO (hFlush, stdout)
 import System.Process (callCommand)
 

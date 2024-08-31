@@ -1,11 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Loja (cadastroProduto, removeProduto) where
+module Loja (cadastroProduto, removeProduto, listarProdutos) where
 
 import Database.SQLite.Simple
+import Database.SQLite.Simple.FromRow
 import Data.String (fromString)
 
 data Produto = Produto String Float String String
+data ProdutoMostrar = ProdutoMostrar Int String Float String String deriving (Show)
+
+instance FromRow ProdutoMostrar where
+    fromRow = ProdutoMostrar <$> field <*> field <*> field <*> field <*> field
 
 cadastroProduto :: String -> Float -> String -> String -> IO String
 cadastroProduto nome valor descricao categorias = do
@@ -46,3 +51,22 @@ verificaExistencia :: Connection -> Int -> IO Int
 verificaExistencia conn id = do
     [Only count] <- query conn "SELECT COUNT(*) FROM loja WHERE id=?" (Only id)
     return count
+
+listarProdutos :: IO()
+listarProdutos = do 
+    conn <- open "data/DataBase.db"
+
+    produtos <- query_ conn "SELECT * FROM loja" :: IO [ProdutoMostrar]
+
+    mapM_ printProdutos produtos
+
+    close conn
+
+printProdutos :: ProdutoMostrar -> IO()
+printProdutos(ProdutoMostrar id nome valor descricao categorias) = do
+    putStrLn $ "Id: " ++ show id
+    putStrLn $ "Nome: " ++ nome
+    putStrLn $ "Valor: " ++ show valor
+    putStrLn $ "Descricao: " ++ descricao
+    putStrLn $ "Categoria: " ++ categorias
+    putStrLn $ ""
