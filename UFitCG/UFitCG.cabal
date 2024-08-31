@@ -29,6 +29,7 @@ library
       AulaExtra
       AvaliacaoFisica
       ClienteAula
+      FichaTreino
       Login
       Loja
       Navegabilidade

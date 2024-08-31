@@ -1,11 +1,17 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE OverloadedStrings #-}
-module AulaExtra (cadastraAula, verificaExistenciaAula) where
+module AulaExtra (cadastraAula, verificaExistenciaAula, removeAula, listarAulas, listarAulasPersonal) where
 
 import Data.String (fromString)
 import Database.SQLite.Simple
 
+import Usuario
+
 data AulaExtra = AulaExtra String String String Int
+data AulaMostrar = AulaMostrar Int String String String Int deriving (Show)
+
+instance FromRow AulaMostrar where
+    fromRow = AulaMostrar <$> field <*> field <*> field <*> field <*> field
 
 cadastraAula :: String -> String -> String -> Int -> IO String
 cadastraAula materia usr_per data_horario limite = do
@@ -44,3 +50,53 @@ verificaExistenciaPersonal :: Connection -> String -> IO Int
 verificaExistenciaPersonal conn personal = do
     [Only count] <- query conn "SELECT COUNT(*) FROM usuario WHERE usr = ? AND (tipo_usr = 'PER' OR tipo_usr = 'ADM') " (Only personal)
     return count
+
+verificaAulaId :: Connection -> String -> IO Int
+verificaAulaId conn id = do
+    [Only count] <- query conn "SELECT COUNT(*) FROM aula_extra WHERE id=?" (Only id)
+    return count
+
+removeAula :: String -> IO String
+removeAula id = do
+    conn <- open "data/DataBase.db"
+    quant <- verificaAulaId conn id
+    if quant >= 1 then do 
+        deletarTupla conn id
+        close conn
+        return "Aula removida!" 
+    else do 
+        close conn
+        return "Aula Inexistente!"
+
+deletarTupla :: Connection -> String -> IO String
+deletarTupla conn id = do
+    execute conn "DELETE FROM aula_extra WHERE usr=?" (Only id)
+    return ""
+
+listarAulasPersonal :: String -> IO()
+listarAulasPersonal usr_per = do 
+    conn <- open "data/DataBase.db"
+
+    aulas <- query conn "SELECT * FROM aula_extra WHERE usr_per=?" (Only usr_per) :: IO [AulaMostrar]
+
+    mapM_ printAulas aulas
+
+    close conn
+
+listarAulas :: IO()
+listarAulas = do 
+    conn <- open "data/DataBase.db"
+
+    aulas <- query_ conn "SELECT * FROM aula_extra" :: IO [AulaMostrar]
+
+    mapM_ printAulas aulas
+
+    close conn
+
+printAulas :: AulaMostrar -> IO()
+printAulas (AulaMostrar id materia usr_per data_horario limite) = do
+    putStrLn $ "Id: " ++ show id
+    putStrLn $ "Materia: " ++ materia
+    putStrLn $ "Personal: " ++ usr_per
+    putStrLn $ "Data e Horario: " ++ data_horario
+    putStrLn $ ""
