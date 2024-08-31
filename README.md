@@ -12,4 +12,24 @@
 ## Stack
 [Link documentacao stack](https://docs.haskellstack.org)
 
+## Menus
+### MenuADM
+1. Controle de Usuario
+2. Controle da Loja
+3. Controle Assinaturas
+4. Vendas
+5. Perfil
 
+## MenuPER
+1. Controle de Aulas
+2. Controle Avalições Fisicas
+3. Controle Ficha de Treino
+4. Perfil
+
+## MenuCLI
+1. Contro Aulas
+2. Controle Fichas de Trieno
+3. Avaliações Fisicas
+4. MarketPlace
+5. Suporte
+6. Perfil
