@@ -2,6 +2,7 @@ module Navegabilidade (abaLogin) where
 
 import Login
 import Assinatura
+import ClienteAula
 import System.IO (hFlush, stdout)
 import System.Process (callCommand)
 
@@ -61,6 +62,7 @@ menuCli :: String -> IO ()
 menuCli usr = do
     putStrLn "Digite O Numero Do Comando A Sua Escolha"
     putStrLn "1. Listas Assinaturas UFitCG"
+    putStrLn "2. Listar Aulas Extras"
     putStrLn "-. Sair"
     comando <- getLine
     callCommand "clear"
@@ -71,6 +73,10 @@ acaoMenuCli comando usr
     | comando == "1" = do
         saida <- listarAssinaturas
         putStrLn saida
+        espera
+        menuCli usr
+    | comando == "2"= do
+        listarAulasCliente usr
         espera
         menuCli usr
     | comando == "-" = return ()

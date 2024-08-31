@@ -28,6 +28,7 @@ library
       Assinatura
       AulaExtra
       AvaliacaoFisica
+      ClienteAula
       Login
       Loja
       Navegabilidade
