@@ -28,7 +28,6 @@ library
       Assinatura
       AulaExtra
       AvaliacaoFisica
-      ClienteAula
       Login
       Loja
       Navegabilidade
@@ -42,6 +41,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , process
     , sqlite-simple
     , text
   default-language: Haskell2010
@@ -58,6 +58,7 @@ executable UFitCG-exe
   build-depends:
       UFitCG
     , base >=4.7 && <5
+    , process
     , sqlite-simple
     , text
   default-language: Haskell2010
@@ -75,6 +76,7 @@ test-suite UFitCG-test
   build-depends:
       UFitCG
     , base >=4.7 && <5
+    , process
     , sqlite-simple
     , text
   default-language: Haskell2010

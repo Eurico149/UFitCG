@@ -1,16 +1,30 @@
 module Navegabilidade (abaLogin) where
 
 import Login
+import Assinatura
+import System.IO (hFlush, stdout)
+import System.Process (callCommand)
 
 abaLogin :: IO ()
 abaLogin = do
-    putStrLn "Usuario :"
+    callCommand "clear"
+
+    putStr "Usuario: "
+    hFlush stdout
     usr <- getLine
-    putStrLn "Senha: "
+    putStr "Senha: "
+    hFlush stdout
     senha <- getLine
 
+    callCommand "clear"
+
     veri <- login usr senha
-    if null veri then abaLogin
+    if null veri then do
+        putStrLn "Usuario ou Senha Invalido"
+        putStrLn "Aperte Enter Para Fazer Login Novamente ou '-' Para Sair"
+        comando <- getLine
+        if comando == "-" then return ()
+        else abaLogin
     else tipoMenu veri usr
 
 tipoMenu :: String -> String -> IO ()
@@ -22,7 +36,22 @@ tipoMenu tipo_usr usr
 
 menuAdm :: String -> IO ()
 menuAdm usr = do
-    putStrLn "acessar lepra"
+    putStrLn "Digite O Numero Do Comando A Sua Escolha"
+    putStrLn "1. Listas Vendas de Assinaturas UFitCG"
+    putStrLn "-. Sair"
+    comando <- getLine
+    callCommand "clear"
+    acaoMenuADM comando usr
+
+acaoMenuADM :: String -> String -> IO()
+acaoMenuADM comando usr
+    | comando == "1" = do
+        saida <- listarVendasAssinaturas
+        putStrLn saida
+        espera
+        menuAdm usr
+    | comando == "-" = return ()
+    | otherwise = menuAdm usr
 
 menuPer :: String -> IO ()
 menuPer usr = do
@@ -30,4 +59,25 @@ menuPer usr = do
 
 menuCli :: String -> IO ()
 menuCli usr = do
-    putStrLn "acessar alzaimer"
+    putStrLn "Digite O Numero Do Comando A Sua Escolha"
+    putStrLn "1. Listas Assinaturas UFitCG"
+    putStrLn "-. Sair"
+    comando <- getLine
+    callCommand "clear"
+    acaoMenuCli comando usr
+
+acaoMenuCli :: String -> String -> IO ()
+acaoMenuCli comando usr
+    | comando == "1" = do
+        saida <- listarAssinaturas
+        putStrLn saida
+        espera
+        menuCli usr
+    | comando == "-" = return ()
+    | otherwise = menuCli usr
+
+espera :: IO ()
+espera = do
+    _ <- getLine
+    callCommand "clear"
+    return ()
