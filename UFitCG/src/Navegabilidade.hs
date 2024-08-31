@@ -1,4 +1,4 @@
-module Navegabilidade (abaLogin) where
+module Navegabilidade (telaInicial) where
 
 import Login
 import Usuario
@@ -10,10 +10,24 @@ import AulaExtra
 import System.IO (hFlush, stdout)
 import System.Process (callCommand)
 
+telaInicial :: IO ()
+telaInicial = do 
+    callCommand "clear"
+
+    putStrLn "|------------------------------|\n|      Bem vindo à UFitCG      |\n|                              |\n|    Tecle ENTER para Login    |\n|      Digite - para Sair      |\n|------------------------------|\n"    
+    input <- getLine
+    acaoTelaInicial input
+    
+acaoTelaInicial :: String -> IO ()
+acaoTelaInicial input
+    | input == "-" = return ()
+    | otherwise = abaLogin
+
 abaLogin :: IO ()
 abaLogin = do
     callCommand "clear"
 
+    putStrLn "LOGIN"
     putStr "Usuario: "
     hFlush stdout
     usr <- getLine
@@ -28,13 +42,13 @@ abaLogin = do
         putStrLn "Usuario ou Senha Invalido"
         putStrLn "Aperte Enter Para Fazer Login Novamente ou '-' Para Sair"
         comando <- getLine
-        if comando == "-" then return ()
+        if comando == "-" then telaInicial
         else abaLogin
     else if "h" == veri then do  
             putStrLn "Usuario fora de Horario de Acesso"
             putStrLn "Aperte Enter Para Fazer Login Novamente ou '-' Para Sair"
             comando <- getLine
-            if comando == "-" then return ()
+            if comando == "-" then telaInicial
             else abaLogin
         else tipoMenu veri usr
 
@@ -62,7 +76,7 @@ acaoMenuADM comando usr
         mostrarPerfil usr
         espera
         menuAdm usr
-    | comando == "-" = abaLogin
+    | comando == "-" = telaInicial
     | otherwise = menuAdm usr
 
 menuUsuarioAdm :: String -> IO () 
@@ -232,7 +246,7 @@ acaoMenuPer :: String -> String -> IO ()
 acaoMenuPer comando usr
     | comando == "1" = menuAulasPer usr
     | comando == "2" = menuAvaliacaoPer usr
-    | comando == "-" = abaLogin
+    | comando == "-" = telaInicial
     | otherwise = menuPer usr
 
 menuAvaliacaoPer :: String -> IO ()
@@ -345,7 +359,7 @@ acaoMenuCli comando usr
         listarAulasCliente usr
         espera
         menuCli usr
-    | comando == "-" = abaLogin
+    | comando == "-" = telaInicial
     | otherwise = menuCli usr
 
 espera :: IO ()
@@ -353,3 +367,4 @@ espera = do
     _ <- getLine
     callCommand "clear"
     return ()
+

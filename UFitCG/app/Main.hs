@@ -5,4 +5,4 @@ import Usuario
 
 main :: IO ()
 main = do
-    abaLogin
+    telaInicial
