@@ -70,7 +70,7 @@ removeAula id = do
 
 deletarTupla :: Connection -> String -> IO String
 deletarTupla conn id = do
-    execute conn "DELETE FROM aula_extra WHERE usr_per=?" (Only id)
+    execute conn "DELETE FROM aula_extra WHERE id=?" (Only id)
     return ""
 
 listarAulasPersonal :: String -> IO()
