@@ -8,7 +8,7 @@ import Loja
 import AvaliacaoFisica
 import FichaTreino
 import AulaExtra
--- import Carinho
+import Carinho
 import System.IO (hFlush, stdout)
 import System.Process (callCommand)
 
@@ -179,9 +179,33 @@ acaoMenuUsuarioAdm comando usr
         putStrLn mensagem
         espera
         menuUsuarioAdm usr
-    -- TODO --> Listar Usuarios
+    | comando == "3" = menuUsuarioListarAdm usr
     | comando == "-" = menuAdm usr
     | otherwise = menuUsuarioAdm usr
+
+menuUsuarioListarAdm :: String -> IO ()
+menuUsuarioListarAdm usr = do
+    putStrLn "Digite O Numero Do Comando A Sua Escolha"
+    putStrLn "1. Listar Todos\n2. Listar Por Tipo\n-. Voltar"
+    comando <- getLine
+    callCommand "clear"
+    acaoMenuUsuarioListarAdm comando usr
+
+acaoMenuUsuarioListarAdm :: String -> String -> IO ()
+acaoMenuUsuarioListarAdm comando usr
+    | comando == "1" = do
+        mostrarUsuarios
+        espera
+        menuUsuarioListarAdm usr
+    | comando == "2" = do
+        putStr "Tipo: "
+        hFlush stdout
+        tipo <- getLine
+        mostrarUsuariosTipo tipo
+        espera
+        menuUsuarioListarAdm usr
+    | comando == "-" = menuUsuarioAdm usr
+    | otherwise = menuUsuarioListarAdm usr
 
 menuLojaAdm :: String -> IO ()
 menuLojaAdm usr = do
@@ -455,7 +479,7 @@ acaoMenuListaAulaPer comando usr
 menuCli :: String -> IO ()
 menuCli usr = do
     putStrLn "Digite O Numero Do Comando A Sua Escolha"
-    putStrLn "1. Controle Aulas\n2. Controle Fichas de Trieno\n3. Avaliações Fisicas\n4. MarcketPlace\n5. Suporte\n6. Perfil\n-. Sair"
+    putStrLn "1. Controle Aulas\n2. Listar Minhas Fichas de Trieno\n3. Minhas Avaliações Fisicas\n4. MarcketPlace\n5. Suporte\n6. Perfil\n-. Sair"
     comando <- getLine
     callCommand "clear"
     acaoMenuCli comando usr
@@ -464,12 +488,10 @@ acaoMenuCli :: String -> String -> IO ()
 acaoMenuCli comando usr
     | comando == "1" = menuAulasCli usr
     | comando == "2" = do
-        -- TODO Apenas Listar as fichas?
         listarFichaCliente usr
         espera
         menuCli usr
     | comando == "3" = do 
-        -- TODO --> Historio de Progressao?
         listarAvaliacoesCliente usr
         espera
         menuCli usr
@@ -528,7 +550,10 @@ acaoMenuAulasListarCli comando usr
         listarAulasCliente usr
         espera
         menuAulasListarCli usr
-    -- TODO --> Listar Todas As aulas 
+    | comando == "2" = do
+        listarAulas
+        espera
+        menuAulasListarCli usr
     | comando == "-" = menuAulasCli usr
     | otherwise = menuAulasListarCli usr
 
@@ -543,8 +568,20 @@ menuMarcketPlaceCli usr = do
 acaoMenuMarcketPlaceCli :: String -> String -> IO ()
 acaoMenuMarcketPlaceCli comando usr
     | comando == "1" = menuMarcketPlaceListarProdCli usr
-    -- TODO --> Printar os produtos do carrinho
-    -- TODO --> Adicionar produto ao carrinho
+    | commando == "2" = do
+        listarProdutosCarrinho
+        espera
+        menuMarcketPlaceCli usr
+    | comando == "3" = do
+        putStr "Id: "
+        hFlush stdout
+        id_prodstr <- getLine
+        let id_prod = read id_prodstr :: Int
+
+        mensagem <- adicionaProdutoCarrinho usr id_prod
+        putStr mensagem
+        espera
+        menuMarcketPlaceCli usr
     | comando == "-" = menuCli usr
     | otherwise = menuMarcketPlaceCli usr
 

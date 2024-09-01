@@ -35,6 +35,7 @@ library
       Loja
       Navegabilidade
       Usuario
+      Venda
   other-modules:
       Paths_UFitCG
   autogen-modules:
