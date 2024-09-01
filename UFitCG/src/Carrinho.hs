@@ -5,6 +5,7 @@ module Carrinho where
 import Database.SQLite.Simple
 import Data.String (fromString)
 import Database.SQLite.Simple.FromRow
+import Data.Time (getCurrentTime, formatTime, defaultTimeLocale)
 
 import Usuario
 import Loja
@@ -75,4 +76,21 @@ valorCompra usr_cli = do
     conn <- open "data/DataBase.db"
     [Only total] <- query conn "SELECT SUM(l.valor) FROM loja AS l, carrinho AS c WHERE c.id_prod = l.id AND c.usr=?" (Only usr_cli) :: IO [Only Float]
     close conn
-    return total 
+    return total
+
+finalizaCompra :: String -> IO String
+finalizaCompra usr_cli = do
+    conn <- open "data/DataBase.db"
+    nomesProdutos <- query conn 
+        "SELECT l.nome FROM loja AS l, carrinho AS c WHERE c.id_prod = l.id AND c.usr=?" (Only usr_cli) :: IO [Only String]
+    close conn
+    let todosProd = concatMap (\(Only nome) -> nome ++ ", ") nomesProdutos
+    if null todosProd
+        then return ""
+        else return (init(init todosProd))
+
+dataFinalizaCompra :: IO String
+dataFinalizaCompra = do
+    dataAtual <- getCurrentTime
+    let dataString = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" dataAtual
+    return dataString
