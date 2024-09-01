@@ -87,7 +87,7 @@ acaoMenuADM comando usr
 menuVendasLojaAdm :: String -> IO()
 menuVendasLojaAdm usr = do
     putStrLn "Digite O Numero Do Comando A Sua Escolha"
-    putStrLn "1. Debito Cliente\n2. Apagar Venda Loja\n-. Voltar"
+    putStrLn "1. Debito Cliente\n2. Apagar Venda Loja\n3. Listar Vendas\n-. Voltar"
     comando <- getLine
     callCommand "clear"
     acaoMenuVendasLojaAdm comando usr
@@ -109,6 +109,10 @@ acaoMenuVendasLojaAdm comando usr
 
         mensagem <- removeVendaLoja id_ven
         putStrLn mensagem
+        espera
+        menuVendasLojaAdm usr
+    | comando == "3" = do
+        listarVendas
         espera
         menuVendasLojaAdm usr
     | comando == "-" = menuAdm usr
