@@ -6,6 +6,7 @@ import Database.SQLite.Simple
 import Data.String (fromString)
 import Database.SQLite.Simple.FromRow
 import Data.Time (getCurrentTime, formatTime, defaultTimeLocale)
+import Data.Time.LocalTime (getCurrentTimeZone, utcToLocalTime)
 
 import Usuario
 import Loja
