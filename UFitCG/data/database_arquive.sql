@@ -88,7 +88,7 @@ CREATE TABLE avaliacao_fisica(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         usr_cli VARCHAR(40) NOT NULL,
         usr_per VARCHAR(40) NOT NULL,
-        avalicao TEXT,
+        avaliacao TEXT,
         observacoes TEXT,
         data_ava VARCHAR(10),
         FOREIGN KEY(usr_cli) REFERENCES usuario(usr),

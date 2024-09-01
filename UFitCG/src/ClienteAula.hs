@@ -39,6 +39,10 @@ quantAulas conn id_aula = do
     [Only count] <- query conn "SELECT COUNT (*) FROM aula_extra WHERE id=?" (Only id_aula)
     return count 
 
+verificaExistenciaAula :: Connection -> String -> IO Int
+verificaExistenciaAula conn id_aula = do
+    [Only count] <- query conn "SELECT COUNT(*) FROM aula_extra WHERE id = ?" (Only id_aula)
+    return count
 
 cancelarAula :: String -> String -> IO String
 cancelarAula usr_cli id_aula = do

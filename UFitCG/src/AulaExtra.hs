@@ -1,6 +1,6 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE OverloadedStrings #-}
-module AulaExtra (cadastraAula, verificaExistenciaAula, removeAula, listarAulas, listarAulasPersonal) where
+module AulaExtra (cadastraAula, removeAula, listarAulas, listarAulasPersonal) where
 
 import Data.String (fromString)
 import Database.SQLite.Simple

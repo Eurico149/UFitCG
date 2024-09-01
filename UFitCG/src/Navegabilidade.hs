@@ -510,12 +510,27 @@ acaoMenuAulasCli comando usr
         putStrLn mensagem
         espera
         menuAulasCli usr
-    | comando == "3" = do
-        listarAulasCliente usr
-        espera
-        menuAulasCli usr
+    | comando == "3" = menuAulasListarCli usr
     | comando == "-" = menuCli usr
     | otherwise = menuAulasCli usr
+
+menuAulasListarCli :: String -> IO ()
+menuAulasListarCli usr = do
+    putStrLn "Digite O Numero Do Comando A Sua Escolha"
+    putStrLn "1. Listar Minhas Aulas\n2. Listar Todas as Aulas\n-. Voltar"
+    comando <- getLine
+    callCommand "clear"
+    acaoMenuAulasListarCli comando usr
+
+acaoMenuAulasListarCli :: String -> String -> IO ()
+acaoMenuAulasListarCli comando usr
+    | comando == "1" = do
+        listarAulasCliente usr
+        espera
+        menuAulasListarCli usr
+    -- TODO --> Listar Todas As aulas 
+    | comando == "-" = menuAulasCli usr
+    | otherwise = menuAulasListarCli usr
 
 menuMarcketPlaceCli :: String -> IO ()
 menuMarcketPlaceCli usr = do
