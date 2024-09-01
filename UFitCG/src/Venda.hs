@@ -10,6 +10,9 @@ import Carrinho
 
 data Venda = Venda String String String Float
 
+instance FromRow Venda where
+    fromRow = Venda <$> field <*> field <*> field <*> field
+
 cadastrarVenda :: String -> IO()
 cadastrarVenda usr = do
     conn <- open "data/DataBase.db"
@@ -28,16 +31,19 @@ cadastrarVenda usr = do
 filtrarVendas :: String -> IO()
 filtrarVendas usr = do
     conn <- open "data/DataBase.db"
-    vendasUsr <- query conn 
-        "SELECT * FROM vendas_loja WHERE usr=?" (Only usr) :: IO [Venda]
+    vendasUsr <- query conn "SELECT * FROM vendas_loja WHERE usr=?" (Only usr) :: IO [Venda]
     close conn
     mapM_ (putStrLn . formatVenda) vendasUsr 
 
 listarVendas :: IO()
 listarVendas = do
     conn <- open "data/DataBase.db"
-    vendas <- query conn 
-        "SELECT * FROM vendas_loja" (Only usr) :: IO [Venda]
+    vendas <- query_ conn "SELECT * FROM vendas_loja" :: IO [Venda]
     close conn
     mapM_ (putStrLn . formatVenda) vendas
+
+formatVenda :: Venda -> String
+formatVenda (Venda produto usr data_venda valor) = "Produto: " ++ produto ++ "\nUsuario: " ++ usr ++ "\nData: " ++ data_venda ++ "\nValor: " ++ show valor ++ "\n" 
+
+
     
