@@ -8,10 +8,10 @@ import Database.SQLite.Simple.FromRow
 
 import Carrinho
 
-data Venda = Venda String String String Float
+data Venda = Venda Int String String String Float deriving (Show)
 
 instance FromRow Venda where
-    fromRow = Venda <$> field <*> field <*> field <*> field
+    fromRow = Venda <$> field <*> field <*> field <*> field <*> field
 
 cadastrarVenda :: String -> IO String
 cadastrarVenda usr = do
@@ -38,10 +38,12 @@ verificaProdutoCarrinho usr = do
 filtrarVendas :: String -> IO()
 filtrarVendas usr = do
     conn <- open "data/DataBase.db"
+
     vendasUsr <- query conn "SELECT * FROM vendas_loja WHERE usr=?" (Only usr) :: IO [Venda]
+
     close conn
-    -- nao ta funfancdo
-    mapM_ (putStrLn . formatVenda) vendasUsr 
+
+    mapM_ formatVenda vendasUsr 
 
 quantidadeVendasLoja :: Connection -> String -> IO Int
 quantidadeVendasLoja conn id_ven = do
@@ -75,10 +77,16 @@ listarVendas = do
     conn <- open "data/DataBase.db"
     vendas <- query_ conn "SELECT * FROM vendas_loja" :: IO [Venda]
     close conn
-    mapM_ (putStrLn . formatVenda) vendas
+    mapM_ formatVenda vendas
 
-formatVenda :: Venda -> String
-formatVenda (Venda produto usr data_venda valor) = "Produto: " ++ produto ++ "\nUsuario: " ++ usr ++ "\nData: " ++ data_venda ++ "\nValor: " ++ show valor ++ "\n" 
+formatVenda :: Venda -> IO ()
+formatVenda (Venda id produto usr data_venda valor) = do
+    putStrLn $ "Id: " ++ show id
+    putStrLn $ "Produto: " ++ produto
+    putStrLn $ "Usuario: " ++ usr
+    putStrLn $ "Data: " ++ data_venda
+    putStrLn $ "Valor: " ++ show valor
+    putStrLn $ ""     
 
 
     
