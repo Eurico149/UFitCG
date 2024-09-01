@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Loja (cadastroProduto, removeProduto, listarProdutos) where
+module Loja (cadastroProduto, removeProduto, listarProdutos, verificaExistenciaProduto) where
 
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow

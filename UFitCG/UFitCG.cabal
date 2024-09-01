@@ -28,6 +28,7 @@ library
       Assinatura
       AulaExtra
       AvaliacaoFisica
+      Carrinho
       ClienteAula
       FichaTreino
       Login
@@ -42,7 +43,9 @@ library
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
+      Cabal-syntax
+    , base >=4.7 && <5
+    , bytestring
     , process
     , sqlite-simple
     , text
@@ -59,8 +62,10 @@ executable UFitCG-exe
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      UFitCG
+      Cabal-syntax
+    , UFitCG
     , base >=4.7 && <5
+    , bytestring
     , process
     , sqlite-simple
     , text
@@ -78,8 +83,10 @@ test-suite UFitCG-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      UFitCG
+      Cabal-syntax
+    , UFitCG
     , base >=4.7 && <5
+    , bytestring
     , process
     , sqlite-simple
     , text
