@@ -91,6 +91,8 @@ finalizaCompra usr_cli = do
 
 dataFinalizaCompra :: IO String
 dataFinalizaCompra = do
-    dataAtual <- getCurrentTime
-    let dataString = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" dataAtual
+    dataAtualUTC <- getCurrentTime
+    timeZone <- getCurrentTimeZone
+    let dataLocal = utcToLocalTime timeZone dataAtualUTC
+    let dataString = formatTime defaultTimeLocale "%d-%m-%Y %H:%M" dataLocal
     return dataString
