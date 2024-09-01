@@ -102,6 +102,19 @@ mostrarPerfil usr = do
 
     close conn
 
+mostrarUsuariosTipo :: String -> IO()
+mostrarUsuariosTipo tipo_usr = do 
+
+    if tipo_usr == "ADM" || tipo_usr == "CLI" || tipo_usr == "PER" then do
+        conn <- open "data/DataBase.db"
+
+        user <- query conn "SELECT * FROM usuario WHERE tipo_usr=?" (Only tipo_usr) :: IO [Usuario]
+
+        mapM_ printPerfil user
+
+        close conn
+    else putStrLn $ "Tipo de Usuario Inválido!"
+
 mostrarUsuarios :: IO()
 mostrarUsuarios = do
     conn <- open "data/DataBase.db"
