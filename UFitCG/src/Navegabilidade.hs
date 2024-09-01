@@ -9,6 +9,7 @@ import AvaliacaoFisica
 import FichaTreino
 import AulaExtra
 import Carrinho
+import Venda
 import System.IO (hFlush, stdout, readFile)
 import System.Process (callCommand)
 
@@ -64,7 +65,7 @@ tipoMenu tipo_usr usr
 menuAdm :: String -> IO ()
 menuAdm usr = do
     putStrLn "Digite O Numero Do Comando A Sua Escolha"
-    putStrLn "1. Controle de Usuario\n2. Controle da Loja\n3. Controle Assinaturas\n4. Vendas\n5. Perfil\n-. Sair"
+    putStrLn "1. Controle de Usuario\n2. Controle da Loja\n3. Controle Assinaturas\n4. Vendas Assinaturas\n5. Vendas Loja\n6. Perfil\n-. Sair"
     comando <- getLine
     callCommand "clear"
     acaoMenuADM comando usr
@@ -75,17 +76,48 @@ acaoMenuADM comando usr
     | comando == "2" = menuLojaAdm usr
     | comando == "3" = menuAssAdm usr
     | comando == "4" = menuVendasAdm usr
-    | comando == "5" = do
+    | comando == "5" = menuVendasLojaAdm usr
+    | comando == "6" = do
         mostrarPerfil usr
         espera
         menuAdm usr
     | comando == "-" = telaInicial
     | otherwise = menuAdm usr
 
+menuVendasLojaAdm :: String -> IO()
+menuVendasLojaAdm usr = do
+    putStrLn "Digite O Numero Do Comando A Sua Escolha"
+    putStrLn "1. Debito Cliente\n2. Apagar Venda Loja\n-. Voltar"
+    comando <- getLine
+    callCommand "clear"
+    acaoMenuVendasLojaAdm comando usr
+
+acaoMenuVendasLojaAdm :: String -> String -> IO()
+acaoMenuVendasLojaAdm comando usr
+    | comando == "1" = do
+        putStr "Cliente: "
+        hFlush stdout
+        usr_cli <- getLine
+
+        filtrarVendas usr_cli
+        espera
+        menuVendasLojaAdm usr
+    | comando == "2" = do
+        putStr "Id: "
+        hFlush stdout
+        id_ven <- getLine
+
+        mensagem <- removeVendaLoja id_ven
+        putStrLn mensagem
+        espera
+        menuVendasLojaAdm usr
+    | comando == "-" = menuAdm usr
+    | otherwise = menuVendasLojaAdm usr
+
 menuVendasAdm :: String -> IO ()
 menuVendasAdm usr = do
     putStrLn "Digite O Numero Do Comando A Sua Escolha"
-    putStrLn "1. Cadastrar Venda\n2. Cancelar Venda\n3. Listar Vendas\n-. Voltar"
+    putStrLn "1. Cadastrar Venda\n2. Cancelar Venda\n3. Listar Vendas\n4. Adicionar Parcela Paga\n-. Voltar"
     comando <- getLine
     callCommand "clear"
     acaoMenuVendasAdm comando usr
@@ -125,8 +157,16 @@ acaoMenuVendasAdm comando usr
         espera
         menuVendasAdm usr
     | comando == "3" = do
-        saida <- listarVendasAssinaturas
-        putStrLn saida
+        listarVendasAssinaturas
+        espera
+        menuVendasAdm usr
+    | comando == "4" = do
+        putStr "Cliente: "
+        hFlush stdout
+        cliente <- getLine
+
+        mensagem <- adicionarParcelaPaga cliente
+        putStrLn mensagem
         espera
         menuVendasAdm usr
     | comando == "-" = menuAdm usr
@@ -564,7 +604,7 @@ acaoMenuAulasListarCli comando usr
 menuMarcketPlaceCli :: String -> IO ()
 menuMarcketPlaceCli usr = do
     putStrLn "Digite O Numero Do Comando A Sua Escolha"
-    putStrLn "1. Listar Produtos\n2. Carinho\n3. Adicionar Produto ao Carinho\n-. Voltar"
+    putStrLn "1. Listar Produtos\n2. Carrinho\n3. Adicionar Produto ao Carrinho\n4. Pagar\n-. Voltar"
     comando <- getLine
     callCommand "clear"
     acaoMenuMarcketPlaceCli comando usr
@@ -583,9 +623,18 @@ acaoMenuMarcketPlaceCli comando usr
         let id_prod = read id_prodstr :: Int
 
         mensagem <- adicionaProdutoCarrinho usr id_prod
-        putStr mensagem
+        putStrLn mensagem
         espera
         menuMarcketPlaceCli usr
+    | comando == "4" = do         
+        putStrLn "Digite Enter Para Confirmar a Compra\nDigite - Para Voltar"         
+        comando <- getLine         
+        if comando == "-" then menuMarcketPlaceCli usr        
+        else do             
+            mensagem <- cadastrarVenda usr   
+            putStrLn mensagem          
+            espera             
+            menuMarcketPlaceCli usr
     | comando == "-" = menuCli usr
     | otherwise = menuMarcketPlaceCli usr
 
@@ -603,7 +652,13 @@ acaoMenuMarcketPlaceListarProdCli comando usr
         listarProdutos
         espera
         menuMarcketPlaceListarProdCli usr
-    -- TODO ---> Listar Produto por categotia
+    | comando == "2" = do
+        putStr "Categoria: "
+        hFlush stdout
+        categoria <- getLine
+        listarProdutosCategorias categoria
+        espera
+        menuMarcketPlaceListarProdCli usr
     | comando == "-" = menuMarcketPlaceCli usr
     | otherwise = menuMarcketPlaceListarProdCli usr
 

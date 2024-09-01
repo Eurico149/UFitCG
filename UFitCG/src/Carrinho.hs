@@ -56,7 +56,7 @@ listarProdutosCarrinho :: String -> IO()
 listarProdutosCarrinho usr_cli = do
     conn <- open "data/DataBase.db"
 
-    prod <- query conn "SELECT l.id, l.nome, l.valor, l.descricao, l.categorias FROM carrinho as c, loja as j WHERE c.id_prod=l.id AND c.usr=?" (Only usr_cli) :: IO [ProdutosCarrinho]
+    prod <- query conn "SELECT l.id, l.nome, l.valor, l.descricao, l.categorias FROM carrinho as c, loja as l WHERE c.id_prod=l.id AND c.usr=?" (Only usr_cli) :: IO [ProdutosCarrinho]
 
     mapM_ printProdutos prod
 

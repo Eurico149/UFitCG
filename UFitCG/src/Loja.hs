@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Loja (cadastroProduto, removeProduto, listarProdutos, verificaExistenciaProduto) where
+module Loja (listarProdutosCategorias, cadastroProduto, removeProduto, listarProdutos, verificaExistenciaProduto, listarProdutosCategorias) where
 
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
@@ -57,6 +57,17 @@ listarProdutos = do
     conn <- open "data/DataBase.db"
 
     produtos <- query_ conn "SELECT * FROM loja" :: IO [ProdutoMostrar]
+
+    mapM_ printProdutos produtos
+
+    close conn
+
+listarProdutosCategorias :: String -> IO()
+listarProdutosCategorias categoria = do 
+    conn <- open "data/DataBase.db"
+
+    let likePattern = "%" ++ categoria ++ "%"
+    produtos <- query conn "SELECT * FROM loja WHERE categorias LIKE ?" (Only likePattern) :: IO [ProdutoMostrar]
 
     mapM_ printProdutos produtos
 

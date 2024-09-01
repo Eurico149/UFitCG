@@ -1,11 +1,11 @@
-module Assinatura (verificaVendaAssinatura, cadastraAssinatura, cadastraVendaAssinatura, removeAssinatura, removeVendasAssinatura, listarAssinaturas, listarVendasAssinaturas) where
+module Assinatura (adicionarParcelaPaga, verificaVendaAssinatura, cadastraAssinatura, cadastraVendaAssinatura, removeAssinatura, removeVendasAssinatura, listarAssinaturas, listarVendasAssinaturas) where
 
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
 import Data.String (fromString)
 import Data.Char (toUpper)
 
-import Usuario (temAssinatura, verificaUsr)
+import Usuario (temAssinatura, verificaUsr, verificaExistencia)
 
 data Assinatura = Assinatura String Float Float Float Int Int String deriving (Show)
 data VendaAssinatura = VendaAssinatura String String String Int String
@@ -14,6 +14,9 @@ instance FromRow Assinatura where
   fromRow = Assinatura <$> field <*> field <*> field <*> field <*> field <*> field <*> field
 instance FromRow VendaAssinaturaLis where
   fromRow = VendaAssinaturaLis <$> field <*> field <*> field <*> field <*> field <*> field
+instance FromRow VendaAssinatura where
+    fromRow = VendaAssinatura <$> field <*> field <*> field <*> field <*> field
+
 
 cadastraAssinatura :: String -> Float -> Float -> Float -> Int -> Int -> String -> IO String
 cadastraAssinatura sigla mensal semestral anual desconto aulas acesso = do
@@ -55,8 +58,8 @@ delAssinatura conn sigla = do
 
 formatAssinatura :: Int -> Assinatura -> String
 formatAssinatura id_ass (Assinatura sigla mensal semestral anual desconto aulas acesso) =
-    if null acesso then show id_ass ++ ". " ++ sigla ++ ", Valor_Mensal: R$" ++ show mensal ++ ", Valor_Semestral: R$" ++ show semestral ++ ", Valor_Anual: R$" ++ show anual ++ ", Desconto_Aulas: " ++ show desconto ++ "%, Aulas: " ++ show aulas ++ ", Acesso: Iimitado"
-    else show id_ass ++ ". " ++ sigla ++ ", Valor_Mensal: R$" ++ show mensal ++ ", Valor_Semestral: R$" ++ show semestral ++ ", Valor_Anual: R$" ++ show anual ++ ", Desconto_Aulas: " ++ show desconto ++ "%, Aulas: " ++ show aulas ++ ", Acesso: " ++ acesso
+    if null acesso then "Id: " ++ show id_ass ++ "\nSigla: " ++ sigla ++ "\nValor_Mensal: R$" ++ show mensal ++ "\nValor_Semestral: R$" ++ show semestral ++ "\nValor_Anual: R$" ++ show anual ++ "\nDesconto_Aulas: " ++ show desconto ++ "%\nAulas: " ++ show aulas ++ "\nAcesso: Iimitado\n"
+    else "Id: " ++ show id_ass ++ "\nSigla: " ++ sigla ++ "\nValor_Mensal: R$" ++ show mensal ++ "\nValor_Semestral: R$" ++ show semestral ++ "\nValor_Anual: R$" ++ show anual ++ "\nDesconto_Aulas: " ++ show desconto ++ "%\nAulas: " ++ show aulas ++ "\nAcesso: " ++ acesso ++ "\n"
 
 listarAssinaturas :: IO String
 listarAssinaturas = do 
@@ -107,8 +110,8 @@ verificaVendaAssinatura id_ven = do
 removeVendasAssinatura :: Int -> IO String
 removeVendasAssinatura id_ven = do
     verivenda <- verificaVendaAssinatura id_ven
-    conn <- open "data/DataBase.db"
     if verivenda then do
+        conn <- open "data/DataBase.db"
         delVendaAssinatura conn id_ven
         close conn
         return "Venda Removida Com Sucesso!"
@@ -119,14 +122,35 @@ delVendaAssinatura conn id_ven = do
     execute conn (fromString "DELETE FROM vendas_assinatura WHERE id=?") (Only id_ven)
     return ()
 
-formatVendaAssinatura :: VendaAssinaturaLis -> String
-formatVendaAssinatura (VendaAssinaturaLis id_ven usr tipo_assinatura tipo_parcela parcelas_pagas data_inicio) =
-    show id_ven ++ ". " ++ show usr ++ ", Tipo_Assinatura: " ++ show tipo_assinatura ++ ", Tipo_Parcela: " ++ show tipo_parcela ++ ", Parcelas_pagas: " ++ show parcelas_pagas ++ ", Data_Inicio: " ++ show data_inicio
-
-listarVendasAssinaturas :: IO String
+listarVendasAssinaturas :: IO ()
 listarVendasAssinaturas = do 
     conn <- open "data/DataBase.db"
+
     vendas <- query_ conn (fromString "SELECT * FROM vendas_assinatura") :: IO [VendaAssinaturaLis]
+
     close conn
-    let resultado = unlines $ map formatVendaAssinatura vendas
-    return resultado
+
+    mapM_ printVendaAssinatura vendas
+
+printVendaAssinatura :: VendaAssinaturaLis -> IO ()
+printVendaAssinatura (VendaAssinaturaLis id_ven usr tipo_assinatura tipo_parcela parcelas_pagas data_inicio) = do
+    putStrLn $ "Id: " ++ show id_ven
+    putStrLn $ "Usuario: " ++ show usr
+    putStrLn $ "Tipo Assinatura: " ++ show tipo_assinatura
+    putStrLn $ "Tipo Parcela: " ++ show tipo_parcela
+    putStrLn $ "Parcelas Pagas: " ++ show parcelas_pagas
+    putStrLn $ "Data_Inicio: " ++ show data_inicio
+    putStrLn $ ""
+
+adicionarParcelaPaga :: String -> IO String
+adicionarParcelaPaga usr_cli = do
+    conn <- open "data/DataBase.db"
+    veri_usr <- verificaExistencia conn usr_cli
+    if (veri_usr /= 0) then do
+        let codigo = fromString "UPDATE vendas_assinatura SET parcelas_pagas = parcelas_pagas + 1 WHERE usr=?" 
+        execute conn codigo (Only usr_cli)
+        close conn
+        return "Parcela Adicionada"
+    else do
+        close conn
+        return "Cliente Não Cadastrado"

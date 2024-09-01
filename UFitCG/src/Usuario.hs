@@ -5,6 +5,7 @@ module Usuario (cadastraUsuario, temAssinatura, verificaUsr, removeUsuario, veri
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
 import Data.String (fromString)
+import Data.Char (toUpper)
 
 
 data Usuario = Usuario String String String String String String Float deriving (Show)
@@ -103,7 +104,8 @@ mostrarPerfil usr = do
     close conn
 
 mostrarUsuariosTipo :: String -> IO()
-mostrarUsuariosTipo tipo_usr = do 
+mostrarUsuariosTipo usr = do 
+    let tipo_usr = (map toUpper usr)
 
     if tipo_usr == "ADM" || tipo_usr == "CLI" || tipo_usr == "PER" then do
         conn <- open "data/DataBase.db"
