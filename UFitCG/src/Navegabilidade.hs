@@ -8,8 +8,8 @@ import Loja
 import AvaliacaoFisica
 import FichaTreino
 import AulaExtra
-import Carinho
-import System.IO (hFlush, stdout)
+import Carrinho
+import System.IO (hFlush, stdout, readFile)
 import System.Process (callCommand)
 
 telaInicial :: IO ()
@@ -496,7 +496,11 @@ acaoMenuCli comando usr
         espera
         menuCli usr
     | comando == "4" = menuMarcketPlaceCli usr
-    -- TODO --> Sistema de Suporte
+    | comando == "5" = do 
+        texto <- readFile "data/Suporte.txt"
+        putStr texto
+        espera
+        menuCli usr
     | comando == "6" = do
         mostrarPerfil usr
         espera
@@ -568,8 +572,8 @@ menuMarcketPlaceCli usr = do
 acaoMenuMarcketPlaceCli :: String -> String -> IO ()
 acaoMenuMarcketPlaceCli comando usr
     | comando == "1" = menuMarcketPlaceListarProdCli usr
-    | commando == "2" = do
-        listarProdutosCarrinho
+    | comando == "2" = do
+        listarProdutosCarrinho usr
         espera
         menuMarcketPlaceCli usr
     | comando == "3" = do

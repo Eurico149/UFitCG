@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Usuario (cadastraUsuario, temAssinatura, verificaUsr, removeUsuario, verificaExistencia, mostrarPerfil, mostrarUsuarios) where
+module Usuario (cadastraUsuario, temAssinatura, verificaUsr, removeUsuario, verificaExistencia, mostrarPerfil, mostrarUsuarios, mostrarUsuariosTipo) where
 
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
