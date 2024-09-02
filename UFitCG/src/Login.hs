@@ -18,7 +18,7 @@ login usr senha = do
             tipo <- veriUsuario conn usr senha
             close conn
             return tipo
-        else return ""
+        else return "h"
     else return ""
 
 veriUsuario :: Connection -> String -> String -> IO String

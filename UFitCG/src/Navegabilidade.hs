@@ -629,7 +629,7 @@ acaoMenuAulasListarCli comando usr
 menuMarcketPlaceCli :: String -> IO ()
 menuMarcketPlaceCli usr = do
     putStrLn "Digite O Numero Do Comando A Sua Escolha"
-    putStrLn "1. Listar Produtos\n2. Carrinho\n3. Adicionar Produto ao Carrinho\n4. Pagar\n-. Voltar"
+    putStrLn "1. Listar Produtos\n2. Carrinho\n3. Adicionar Produto ao Carrinho\n4. Remover Produto do Carrinho\n5. Pagar\n-. Voltar"
     comando <- getLine
     callCommand "clear"
     acaoMenuMarcketPlaceCli comando usr
@@ -651,7 +651,17 @@ acaoMenuMarcketPlaceCli comando usr
         putStrLn mensagem
         espera
         menuMarcketPlaceCli usr
-    | comando == "4" = do         
+    | comando == "4" = do
+        putStr "Id: "
+        hFlush stdout
+        id_prodstr <- getLine
+        let id_prod = read id_prodstr :: Int
+
+        mensagem <- deletarProdutoCarrinho usr id_prod
+        putStrLn mensagem
+        espera
+        menuMarcketPlaceCli usr
+    | comando == "5" = do         
         putStrLn "Digite Enter Para Confirmar a Compra\nDigite - Para Voltar"         
         comando <- getLine         
         if comando == "-" then menuMarcketPlaceCli usr        

@@ -11,6 +11,7 @@ import Data.Time.LocalTime (getCurrentTimeZone, utcToLocalTime)
 import Usuario
 import Loja
 import Distribution.Compat.Prelude (Double)
+import Control.Monad (Monad(return))
 
 data Carrinho = Carrinho String Int
 data ProdutosCarrinho = ProdutosCarrinho Int String Float String String deriving (Show)
@@ -46,12 +47,12 @@ deletarCarinho usr_cli = do
     execute conn "DELETE FROM carrinho WHERE usr=?" (Only usr_cli)
     putStrLn "Todos os Produtos Foram Excluidos do Seu Carrinho"
 
-deletarProdutoCarrinho :: String -> Int -> IO()
+deletarProdutoCarrinho :: String -> Int -> IO String
 deletarProdutoCarrinho usr_cli id_prod = do
     conn <- open "data/DataBase.db"
     let codigo = fromString "DELETE FROM carrinho WHERE usr=? AND id_prod=?;"
     execute conn codigo (usr_cli, id_prod)
-    putStrLn "Produto Excluido do Seu Carrinho!"
+    return "Produto Excluido do Seu Carrinho!"
 
 listarProdutosCarrinho :: String -> IO()
 listarProdutosCarrinho usr_cli = do
