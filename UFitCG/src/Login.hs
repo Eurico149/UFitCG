@@ -44,7 +44,7 @@ verificaHorario conn usr = do
     case tipo_assinatura of
         Nothing -> return True
         Just "SIL" -> 
-            if hour >= 6 && hour <= 7
+            if hour >= 6 && hour <= 14
                then return True
                else return False
         _ -> return True
