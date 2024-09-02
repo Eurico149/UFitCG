@@ -129,9 +129,9 @@ menuVendasAdm usr = do
 acaoMenuVendasAdm :: String -> String -> IO ()
 acaoMenuVendasAdm comando usr
     | comando == "1" = do
-        putStr "Usuario: "
+        putStr "Cliente: "
         hFlush stdout
-        usr <- getLine
+        usr_cli <- getLine
         putStr "Tipo de Assinatura: "
         hFlush stdout
         tipo_ass <- getLine
@@ -146,7 +146,7 @@ acaoMenuVendasAdm comando usr
         hFlush stdout
         data_inicio <- getLine
 
-        mensagem <- (cadastraVendaAssinatura usr tipo_ass tipo_parcela parcelas_pagas data_inicio)
+        mensagem <- (cadastraVendaAssinatura usr_cli tipo_ass tipo_parcela parcelas_pagas data_inicio)
         putStrLn mensagem
         espera
         menuVendasAdm usr
