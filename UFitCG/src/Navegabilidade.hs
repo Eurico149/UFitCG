@@ -290,12 +290,33 @@ acaoMenuLojaAdm comando usr
         putStrLn mensagem
         espera
         menuLojaAdm usr
-    | comando == "3" = do
-        listarProdutos
-        espera
-        menuLojaAdm usr
+    | comando == "3" = menuLojaListarAdm usr
     | comando == "-" = menuAdm usr
     | otherwise = menuLojaAdm usr
+
+menuLojaListarAdm :: String -> IO ()
+menuLojaListarAdm usr = do
+    putStrLn "Digite O Numero Do Comando A Sua Escolha"
+    putStrLn "1. Listar Todos\n2. Listar Por Categoria\n-. Voltar"
+    comando <- getLine
+    callCommand "clear"
+    acaoMenuLojaListarAdm comando usr
+
+acaoMenuLojaListarAdm :: String -> String -> IO()
+acaoMenuLojaListarAdm comando usr
+    | comando == "1" = do 
+        listarProdutos
+        espera
+        menuLojaListarAdm usr
+    | comando == "2" = do
+        putStr "Categoria: "
+        hFlush stdout
+        categoria <- getLine
+        listarProdutosCategorias categoria
+        espera
+        menuLojaListarAdm usr
+    | comando == "-" = menuLojaAdm usr
+    | otherwise = menuLojaListarAdm usr
 
 menuAssAdm :: String -> IO () 
 menuAssAdm usr = do
