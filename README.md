@@ -1,5 +1,5 @@
 # UFitCG
-[Link Documentação Professor](https://docs.google.com/document/d/1b3tzyEJZvm5fzqHEalwYusvA1-_AlCc8wi3itf_dr2E/edit)
+A UFitCG é um projeto em CLI(interface de linha de comando) feito em Haskell, com o objetivo de aprendizagem na disciplina de PLP(Paradigmas de Linguagens de Programação).
 
 ## Integrantes
 1. Arlis
@@ -8,10 +8,16 @@
 4. Renaldo
 5. Rodrigo
 
-## Stack
-[Link documentacao stack](https://docs.haskellstack.org)
+## Specificação
+[Link Documentação Professor](https://docs.google.com/document/d/1b3tzyEJZvm5fzqHEalwYusvA1-_AlCc8wi3itf_dr2E/edit)
 
-## Intruções
-1. Baixar Stack na Sua Maquina: 'curl -sSL https://get.haskellstack.org/ | sh'
-2. Compilar Usando 'stack build' na raiz(UFitCG/) do Projeto
-3. Executar o Projeto Usando 'stack exec UFitCG-exe' Tambem na Raiz
+## Como Rodar
+``` sh
+# Instalar Stack na Sua Maquina
+curl -sSL https://get.haskellstack.org/ | sh
+
+# Compilando e Executando o Codigo
+stack build
+stack exec UFitCG-exe
+```
+Login de ADM: adm, 12345678

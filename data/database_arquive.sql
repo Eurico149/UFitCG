@@ -113,4 +113,4 @@ CREATE TABLE clientes_aulas(
         FOREIGN KEY(id_aula) REFERENCES aula_extra(id)
 );
 
-INSERT INTO usuario(usr, senha, tipo_usr, nome, data_nascimento, tipo_assinatura, salario) VALUES ('eurico', '12345678', 'ADM', 'Eurico Gabriel Vasconcelos Pereira', '13/02/2000', '', 3500.00);
+INSERT INTO usuario(usr, senha, tipo_usr, nome, data_nascimento, tipo_assinatura, salario) VALUES ('adm', '12345678', 'ADM', 'main adm', '13/02/2000', '', 3500.00);
